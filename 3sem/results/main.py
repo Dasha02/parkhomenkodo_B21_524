@@ -12,7 +12,7 @@ import numpy as np
 import random
 import math
 
-# Функция для преобразования изображения в монохромный режим
+
 def monochrome(input_image):
     width, height = input_image.size
     output_image = Image.new('L', (width, height))
@@ -26,7 +26,7 @@ def monochrome(input_image):
 
     return output_image
 
-# Функция для добавления шума "соль и перец"
+
 def salt_and_pepper_noise(input_image, noise_ratio):
     width, height = input_image.size
     output_image = input_image.copy()
@@ -45,10 +45,10 @@ def salt_and_pepper_noise(input_image, noise_ratio):
 
     return output_image
 
-# Функция для выполнения операции морфологического закрытия (Closing)
+
 def closing(input_image, kernel_size):
 
-    # Функция для выполнения операции дилатации
+    
     def dilation(image, kernel_size):
         width, height = image.size
         output_image = Image.new('L', (width, height))
@@ -67,7 +67,7 @@ def closing(input_image, kernel_size):
 
         return output_image
 
-    # Функция для выполнения операции эрозии
+
     def erosion(image, kernel_size):
         width, height = image.size
         output_image = Image.new('L', (width, height))
@@ -86,7 +86,7 @@ def closing(input_image, kernel_size):
 
         return output_image
 
-    # Выполнение операции морфологического закрытия
+
     dilated_image = dilation(input_image, kernel_size)
     closed_image = erosion(dilated_image, kernel_size)
 
@@ -99,21 +99,16 @@ def main(smth=None):
 
     for i in range(len(filename)):
 
-        # Загрузка входного изображения
         input_image = Image.open(filename[i]).convert("RGB")
 
-        # Преобразование в монохромный режим
         monochrome_image = monochrome(input_image)
 
-        # Добавление шума "соль и перец"
         noise_ratio = 0.05
         noisy_image = salt_and_pepper_noise(monochrome_image, noise_ratio)
 
-        # Применение операции морфологического закрытия (Closing)
         kernel_size = 3
         closed_image = closing(noisy_image, kernel_size)
 
-        # Вычисление разностного изображения
         diff_image = Image.new('L', monochrome_image.size)
         pixels_diff = diff_image.load()
         pixels_mono = monochrome_image.load()
@@ -124,7 +119,6 @@ def main(smth=None):
                 diff_value = abs(pixels_mono[x, y] - pixels_closed[x, y])
                 pixels_diff[x, y] = diff_value
 
-        # Сохранение результирующих изображений
         monochrome_image.save(f"{filename[i][:-4]}_monochrome_image.png")
         noisy_image.save(f"{filename[i][:-4]}_noisy_image.png")
         closed_image.save(f"{filename[i][:-4]}_closed_image.png")
