@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 from skimage.feature import graycomatrix, graycoprops
 from PIL import Image
 
-# монохром
 def to_grayscale(img_path):
     img = Image.open(img_path).convert('RGB')
     width, height = img.size
@@ -24,7 +23,7 @@ def to_grayscale(img_path):
             gray_img[y, x] = gray
     return gray_img
 
-# построение матрицы Харалика
+
 def build_glcm(img, d=1, angles=[0, np.pi/4, np.pi/2, 3*np.pi/4]):
     glcms = []
     for angle in angles:
@@ -33,12 +32,12 @@ def build_glcm(img, d=1, angles=[0, np.pi/4, np.pi/2, 3*np.pi/4]):
     glcm_mean = np.mean(glcms, axis=0)
     return glcm_mean
 
-# вычисление признака корреляции
+
 def calc_corr(glcm):
     glcm_4d = np.expand_dims(np.expand_dims(glcm, axis=2), axis=3)
     return graycoprops(glcm_4d, 'correlation')[0, 0]
 
-# визуализация матрицы Харалика
+
 def visualize_glcm(glcm, title):
     plt.imshow(glcm, cmap='gray', vmax=np.max(glcm), vmin=np.min(glcm))
     plt.colorbar()
@@ -46,7 +45,7 @@ def visualize_glcm(glcm, title):
     plt.savefig(f'{title}.png', bbox_inches='tight')
     plt.show()
 
-# логарифмическое нормирование изображения
+
 def log_normalize(img):
     img_log = np.log(1 + img)
     img_log = (img_log - np.min(img_log)) / (np.max(img_log) - np.min(img_log)) * 255
@@ -59,20 +58,15 @@ def main(smth=None):
 
     for i in range(len(filename)):
 
-        # в монохром
         img1 = to_grayscale(filename[i])
 
-        # матрица Харалика и признак корреляции - исход
         glcm1 = build_glcm(img1)
         corr1 = calc_corr(glcm1)
 
         visualize_glcm(glcm1, f'matrix_haralik_{filename[i]}_original')
 
-        # Логарифмическое нормирование изображений
         img1_log = log_normalize(img1)
 
-
-        # матрица Харалика и признак корреляции - контраст
         glcm1_log = build_glcm(img1_log)
         corr1_log = calc_corr(glcm1_log)
 
@@ -94,7 +88,6 @@ def main(smth=None):
         plt.show()
 
 
-    # Запись результатов в текстовый файл
     with open(f"{filename[i][:-4]}_results.txt", "w", encoding="utf-8") as f:
         f.write(f'Признак корреляции для изображения {filename[i]} (исходное): {corr1}\n\n')
         f.write(f'Признак корреляции для изображения {filename[i]} (контрастированное): {corr1_log}')
