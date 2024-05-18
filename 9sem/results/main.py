@@ -13,7 +13,7 @@ from scipy import signal
 import numpy as np
 from math import factorial
 
-#фильтр Савицкого-Голея
+
 def savitzky_golay(fs, aud, cutoff_freuency, passes=1):
     z = signal.savgol_filter(aud, 100, 3)
     b, a = signal.butter(3, cutoff_freuency / fs)
@@ -21,7 +21,7 @@ def savitzky_golay(fs, aud, cutoff_freuency, passes=1):
     z, _ = signal.lfilter(b, a, z, zi = zi * z[0])
     return z
 
-# фильтр низких частот
+
 def low_pass_filter(aud, cutoff_frequency, fs):
     nyquist_frequency = fs / 2
     normalized_cutoff = cutoff_frequency / nyquist_frequency
@@ -37,21 +37,18 @@ def low_pass_filter(aud, cutoff_frequency, fs):
 def find_peaks(spec, freq, t, delta_t=0.1, delta_freq=50):
     peaks = set()
 
-    # размеры окрестностей по времени и частоте
     t_increment = int(delta_t * len(t) / (t[-1] - t[0]))
     freq_increment = int(delta_freq * len(freq) / (freq[-1] - freq[0]))
 
     for i, freq_val in enumerate(freq):
         for j, time_val in enumerate(t):
-          # границы окрестности по времени и частоте
             t_min = max(0, j - t_increment)
             t_max = min(len(t), j + t_increment + 1)
             freq_min = max(0, i - freq_increment)
             freq_max = min(len(freq), i + freq_increment + 1)
 
-            is_peak = True # текущая точка как пика
+            is_peak = True 
 
-            # Если найдено значение больше текущего, то текущая точка не является пиком
             for a in range(freq_min, freq_max):
                 for b in range(t_min, t_max):
                     if (a != i or b != j) and spec[i, j] < spec[a, b]:
